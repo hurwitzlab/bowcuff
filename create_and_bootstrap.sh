@@ -4,8 +4,8 @@ set -x
 
 echo "Hello! starting $(date)"
 
-sudo rm -rf fastqc.img
-singularity create -s 1234 fastqc.img
-sudo singularity bootstrap fastqc.img ubuntu.sh
+sudo rm -rf bowcuff.img
+singularity create -s 2048 bowcuff.img
+sudo singularity bootstrap bowcuff.img ubuntu.sh
 
 echo "Goodbye! ending $(date)"
