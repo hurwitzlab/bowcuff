@@ -59,3 +59,8 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
     #create a directory to work in
     mkdir /work
+    #so we dont get those stupid worning on hpc/pbs
+    mkdir /extra
+    mkdir /xdisk
+    #so we dont get those stupid perl warnings
+    locale-gen en_US.UTF-8
