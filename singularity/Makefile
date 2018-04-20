@@ -6,6 +6,9 @@ IMG_NAME = bowtiesam.img
 DEF_NAME = BowtieBatch.def
 SIZE = 2048
 
+help:
+	sudo $(SINGULARITY) exec $(IMG_NAME) bowtie_batch.py -h
+
 run:
 	sudo $(SINGULARITY) run $(IMG_NAME)
 
