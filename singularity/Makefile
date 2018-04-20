@@ -2,12 +2,12 @@ SING242 = /usr/local/bin/singularity #2.4.2-dist
 SING231 = /home/vagrant/bin/singularity #2.3.1-dist
 
 SINGULARITY = $(SING231)
-IMG_NAME = bowtiesam.img
-DEF_NAME = BowtieBatch.def
+IMG_NAME = cuffKeggR.img
+DEF_NAME = image.def
 SIZE = 2048
 
 help:
-	sudo $(SINGULARITY) exec $(IMG_NAME) bowtie_batch.py -h
+	sudo $(SINGULARITY) exec $(IMG_NAME) cuffdiff -h
 
 run:
 	sudo $(SINGULARITY) run $(IMG_NAME)
@@ -24,4 +24,4 @@ shell:
 	sudo $(SINGULARITY) shell --writable -B /vagrant:/work $(IMG_NAME)
 
 scp:
-	scp $(IMG_NAME) stampede2:/work/03859/sdaniel/stampede2/bowcuff/stampede/
+	scp $(IMG_NAME) stampede2:/work/03859/sdaniel/stampede2/cuffdiff-keggR/stampede/
