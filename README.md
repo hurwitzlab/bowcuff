@@ -2,10 +2,10 @@
 - Identified bacterial species from a metagenomic sample
 - Downloaded genomes of said species
 
-## [bowtie-samtools - Radcot Part Two - 2nd step](https://github.com/hurwitzlab/bowtie-samtools)
+### [bowtie-samtools - Radcot Part Two - 2nd step](https://github.com/hurwitzlab/bowtie-samtools)
 - Quantified transcripts of genes within these species
 
-### [cuffdiff-keggR - Radcot Part Three - YOU ARE HERE](https://github.com/hurwitzlab/cuffdiff-keggR)
+## [cuffdiff-keggR - Radcot Part Three - YOU ARE HERE](https://github.com/hurwitzlab/cuffdiff-keggR)
 - Annotate RNA counts of genes with KEGG pathway information
 - Generate graphs of RNA count differences per KEGG module
 
