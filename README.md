@@ -1,9 +1,9 @@
-# Radcot Part 2
+# Radcot Part Two
 A pipeline that can:
 - Quantify transcripts of genes within these species
 - Generate graphs of RNA count differences
 
-## Do part 1 first<sup>1</sup> [here](https://github.com/scottdaniel/centrifuge-patric)
+## Do Part One first<sup>1</sup> [here](https://github.com/scottdaniel/centrifuge-patric)
 - Identify bacterial species from a metagenomic sample
 - Download genomes of said species
 
@@ -17,6 +17,8 @@ OR
 ---
 <sup>1</sup>Unless you already have RNA reads
 and the genomes you want to align to
+
+
 <sup>2</sup>I assume this can be adapted to run on other 
 batch-scheduled high-performance computer systems 
 but this has not been tested.
