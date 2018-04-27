@@ -26,7 +26,6 @@ function HELP() {
     echo "GFF="./genomes/genome.gff" #-G | --gff"
     echo "LOG_FN="cuffdiff.log" #-l | --log-file"
     echo "THREADS="1" #-t | --threads"
-    echo "SING_IMG="cuffKeggR.img" #-S | --sing-img"
     echo "OUT_DIR="./out_dir" #-O | --out-dir"
     echo "RRNA_GFF="./rRNA.gff" #-M | --mask-gff"
     echo "DEBUG="FALSE" #-d | --debug"
@@ -52,7 +51,7 @@ GFF_DIR="./genomes" #-g | --gff-dir"
 GFF="./genomes/genome.gff" #-G | --gff"
 LOG_FN="cuffdiff.log" #-l | --log-file"
 THREADS="1" #-t | --threads"
-SING_IMG="cuffKeggR.img" #-S | --sing-img"
+SING_IMG="cuffKeggR.img" 
 OUT_DIR="./out_dir" #-O | --out-dir"
 RRNA_GFF="./rRNA.gff" #-M | --mask-gff"
 DEBUG="FALSE" #-d | --debug"
@@ -71,77 +70,29 @@ while getopts :b:g:G:l:t:S:O:M:d:s:A:h ARG; do
         g)
             GFF_DIR="$OPTARG"
             ;;
-        d)
-            INPUT_DB="$OPTARG"
-            ;;
-        f)
-            INPUT_FMT="$OPTARG"
-            ;;
-#        i)
-#            INTERLEAVED=1
-#            ;;
-#        y)
-#            READ_TYPES="$OPTARG"
-#            ;;
-#        D)
-#            DISTANCE="$OPTARG"
-#            ;;
-#        x)
-#            FILTER="$OPTARG"
-#            ;;
-#        u)
-#            UNPAIR_TERM="$OPTARG"
-#            ;;
-#        p)
-#            PAIR_TERM="$OPTARG"
-#            ;;
-        k)
-            KEEP_SAM=1
-            ;;
-        m)
-            MERGE_OUTPUT=1
-            ;;
-        n)
-            MERGE_NAME="$OPTARG"
-            ;;
-        z)
-            REMOVE_TMP=1
+        G)
+            GFF="$OPTARG"
             ;;
         l)
             LOG_FN="$OPTARG"
             ;;
-        a)
-            ALIGN_TYPE="$OPTARG"
-            ;;
-        e)
-            GLOBAL_PRESETS="$OPTARG"
-            ;;
-        c)
-            LOCAL_PRESETS="$OPTARG"
-            ;;
-        N)
-            NON_DETERMINISTIC=1
-            ;;
-#        5)
-#            TRIM5="$OPTARG"
-#            ;;
-#        3)
-#            TRIM3="$OPTARG"
-#            ;;
-        I)
-            MININS="$OPTARG"
-            ;;
-        X)
-            MAXINS="$OPTARG"
-            ;;
         t)
             THREADS="$OPTARG"
             ;;
-        S)
-            SING_IMG="$OPTARG"
-            ;;
-        O)
+        o)
             OUT_DIR="$OPTARG"
+            ;;
+        M)
+            RRNA_GFF="$OPTARG"
+            ;;
+        d)
+            DEBUG=1
+            ;;
+        s)
+            SILENT=1
+            ;;
+        A)
+            MORE_ARGS="$OPTARG"
             ;;
         h)
             HELP
@@ -161,21 +112,22 @@ done
 #options that have already been handled from $@.
 shift $((OPTIND -1))
 
-#echo "Outdir is $OUT_DIR"
-#echo "INTERLEAVED is $INTERLEAVED"
 
 #If you have your own launcher setup on stampede2 just point MY_PARAMRUN at it
 #this will override the TACC_LAUNCHER...
 #PARAMRUN="${MY_PARAMRUN:-$TACC_LAUNCHER_DIR/paramrun}"
+
 #check for centrifuge image
 if [[ ! -e "$SING_IMG" ]]; then
     echo "Missing SING_IMG \"$SING_IMG\""
     exit 1
 fi
+
 #
 # Verify existence of various directories, files
 #
-[[ ! -d "$OUT_DIR" ]] && mkdir -p "$OUT_DIR"
+#[[ ! -d "$OUT_DIR" ]] && mkdir -p "$OUT_DIR"
+# python script will do these checks
 
 ###Uncomment when back on TACC
 #if [[ ! -d "$TACC_LAUNCHER_DIR" ]]; then
@@ -188,28 +140,9 @@ fi
 #    exit 1
 #fi
 
-export GENOME_LIST="$(pwd)/genome_list"
-cat /dev/null > $GENOME_LIST
 
-#Need to concatenate all the fastas into one
-if [[ ! -e "$INPUT_DB" ]]; then
-    echo "Searching $INPUT_DIR for genome fastas"
-    find $INPUT_DIR -iname "*.fna" > $GENOME_LIST
-    echo "Found $(lc $GENOME_LIST) in $INPUT_DIR"
-    if [[ $(lc $GENOME_LIST) -lt 1 ]]; then
-        echo "No genome fastas found!"
-        exit 1
-    else
-        sed 's/\n/ /' $GENOME_LIST | xargs -I file cat file > $INPUT_DB
-    fi
-fi
-
-#Run bowtie_batch
-#TODO: gotta figure out this path stuff
-#TODO: make a "auto-map" in the singularity config file
-#TODO: so that /vagrant is automagically available
-INPUT_DB=$GUEST/$(basename $INPUT_DIR)/$(basename $INPUT_DB)
-singularity run -B "$HOST":"$GUEST" $SING_IMG -d $INPUT_DB \
+#Run cuffquant, cuffnorm, and cuffdiff
+singularity run $SING_IMG -d $INPUT_DB \
     -r $GUEST/rna/control \
     -f fastq -t 4
 
