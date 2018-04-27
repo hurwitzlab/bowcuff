@@ -9,10 +9,23 @@
 #SBATCH --mail-type BEGIN,END,FAIL
 #SBATCH --mail-user scottdaniel@email.arizona.edu
 
-OUT_DIR="$WORK/centrifuge_test"
+#for local testing#####
+#if the singularity.conf is right, then /vagrant should be auto-shared
+export WORK="/vagrant"
+#export GUEST="/work"
+########################
 
-export MY_PARAMRUN="$HOME/launcher/paramrun"
+export OUT_DIR="$WORK/bowtie_test"
+
+#export MY_PARAMRUN="$HOME/launcher/paramrun"
 
 [[ -d "$OUT_DIR" ]] && rm -rf $OUT_DIR/*
 
-bash run.sh -q "$WORK/in" -f fastq -o $OUT_DIR -x 9606,32630
+#-i "$WORK/genomes"
+
+bash run_simple.sh \
+    -i "$WORK/genomes" \
+    -1 /vagrant/rna/cancer/RNA_cancer_R1_sample_01.fastq.gz,/vagrant/rna/cancer/RNA_cancer_R1_sample_02.fastq.gz,/vagrant/rna/cancer/RNA_cancer_R1_sample_03.fastq.gz \
+    -2 /vagrant/rna/cancer/RNA_cancer_R2_sample_01.fastq.gz,/vagrant/rna/cancer/RNA_cancer_R2_sample_02.fastq.gz,/vagrant/rna/cancer/RNA_cancer_R2_sample_03.fastq.gz \
+    -O $OUT_DIR \
+    -f fastq -t 4
