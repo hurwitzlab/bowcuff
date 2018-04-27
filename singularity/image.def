@@ -37,3 +37,12 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
     #so we dont get those stupid perl warnings
     locale-gen en_US.UTF-8
+
+    #directory bind points for TACC
+    mkdir /work
+    mkdir /scratch
+    mkdir /home1
+
+    #for ubuntu vbox vagrant
+    #comment out once ready for deployment
+    mkdir /vagrant
