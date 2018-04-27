@@ -23,7 +23,9 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     bash miniconda.sh -b -p /media/miniconda
     PATH="/media/miniconda/bin:$PATH"
     conda install -y -c bioconda cufflinks
-    conda install -y -c R
+    conda install -y -c bioconda r-optparse 
+#    conda install -y -c r r-base r-rcolorbrewer r-reshape2 
+#    conda install -y -c r r-ggplot2 r-dplyr r-plyr r-r.utils r-tidyr
 
     #cleanup    
     conda clean -y --all
