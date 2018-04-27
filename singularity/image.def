@@ -23,7 +23,9 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     bash miniconda.sh -b -p /media/miniconda
     PATH="/media/miniconda/bin:$PATH"
     conda install -y -c bioconda cufflinks
-    conda install -y -c R
+    conda install -y -c bioconda r-optparse 
+    conda install -y -c r r-rcolorbrewer r-reshape2 
+    conda install -y -c r r-ggplot2 r-dplyr r-plyr r-r.utils r-tidyr
 
     #cleanup    
     conda clean -y --all
@@ -35,3 +37,12 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
     #so we dont get those stupid perl warnings
     locale-gen en_US.UTF-8
+
+    #directory bind points for TACC
+    mkdir /work
+    mkdir /scratch
+    mkdir /home1
+
+    #for ubuntu vbox vagrant
+    #comment out once ready for deployment
+    mkdir /vagrant

@@ -4,7 +4,7 @@ SING231 = /home/vagrant/bin/singularity #2.3.1-dist
 SINGULARITY = $(SING231)
 IMG_NAME = cuffKeggR.img
 DEF_NAME = image.def
-SIZE = 2048
+SIZE = 2536
 
 help:
 	sudo $(SINGULARITY) exec $(IMG_NAME) cuffKeggR.py -h
@@ -21,7 +21,7 @@ img: clean
 	sudo $(SINGULARITY) bootstrap $(IMG_NAME) $(DEF_NAME)
 
 shell:
-	sudo $(SINGULARITY) shell --writable -B /vagrant:/work $(IMG_NAME)
+	sudo $(SINGULARITY) shell --writable $(IMG_NAME)
 
 scp:
 	scp $(IMG_NAME) stampede2:/work/03859/sdaniel/stampede2/cuffdiff-KeggR/stampede/
