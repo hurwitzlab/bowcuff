@@ -1,13 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 ###############################################################################
 #                                                                             #
-#    patric_bowtie2.py                                                        #
+#    cuffKeggR.py                                                             #
 #                                                                             #
-#    A wrapper script for Bowtie2, that runs Bowtie and Samtools on           #
-#    read files using a directory of PATRIC (patricbrc.org) genomes           #
+#    A wrapper script that uses cuffdiff to compare RNA counts between        #
+#    samples at a species level, generates graphs with R                      #
 #                                                                             #
-#    Copyright (C) Benjamin Bolduc, Scott G Daniel                            #
+#    Copyright (C) Scott G Daniel                                             #
 #                                                                             #
 ###############################################################################
 #                                                                             #
@@ -26,12 +26,12 @@
 #                                                                             #
 ###############################################################################
 
-__author__ = ["Ben Bolduc", "Scott G Daniel"]
+__author__ = "Scott G Daniel"
 __copyright__ = "Copyright 2018"
-__credits__ = ["Ben Bolduc","Scott G Daniel"]
+__credits__ = "Scott G Daniel"
 __license__ = "LGPLv3"
-__maintainer__ = ["Ben Bolduc", "Scott G Daniel"]
-__email__ = ["bbolduc.chem@gmail.com","scottdaniel@email.arizona.edu"]
+__maintainer__ = "Scott G Daniel"
+__email__ = "scottdaniel@email.arizona.edu"
 __status__ = "Development"
 
 import glob
@@ -39,9 +39,7 @@ import os
 import sys
 import subprocess
 import argparse
-import itertools
 from pprint import pprint
-from Bio import SeqIO
 
 #WORK env var will be present on TACC
 #But may not be set when testing locally
@@ -53,8 +51,8 @@ if os.getenv('WORK') is None:
 ####################
 
 parser = argparse.ArgumentParser(description=
-        "The script essentially wraps bowtie2 for aligning\n"
-        "reads against the same reference sequence collection.\n",
+        "The script essentially wraps cuffdiff for comparing\n"
+        "RNA counts between samples.\n",
         formatter_class=argparse.RawTextHelpFormatter)
 
 inputs = parser.add_argument_group('Required Inputs and Parameters',
