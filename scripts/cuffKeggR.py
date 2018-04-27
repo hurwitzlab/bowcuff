@@ -193,16 +193,7 @@ args = parser.parse_args()
 # SETS AND CHECKS ##
 ####################
 
-
 #check for args that need to be set (the app.json / agave api should do this too)
-preset = False
-if args.align_type == "end-to-end":
-    preset = args.global_presets
-if args.align_type == "local":
-    preset = args.local_presets
-
-if args.input_fmt not in ['fasta', 'fastq', 'fq']:
-    error('ERROR: Input format must be either fasta or fastq formatted')
 
 ###############
 # FUNCTIONS ###
@@ -213,13 +204,12 @@ def error(msg):
     sys.stderr.flush()
     sys.exit(1)
 
-def cat_fasta(input_dir,bt2_idx):
-    file_list = glob.glob(input_dir + "/*.fna")
-    with open(bt2_idx+'.fna','w') as w_file:
+def cat_gff(gff_dir,gff):
+    file_list = glob.glob(gff_dir + "/*.gff")
+    with open(gff+'.gff','w') as w_file:
         for filen in file_list:
             with open(filen, 'rU') as o_file:
-                seq_records = SeqIO.parse(o_file, 'fasta')
-                SeqIO.write(seq_records, w_file, 'fasta')
+                write(o_file, w_file)
 
         return w_file.name
 
@@ -233,27 +223,11 @@ def execute(command, logfile):
 
     logfile.write(stderr + os.linesep)
 
-def prepare_bowtie_db(input_dir, bt2_idx, logfile):
+def make_graphs():
 
-    bt2_db_fasta = args.bt2_idx + '.fna'
-    db_dir = os.path.dirname(args.bt2_idx) #E.g. /vagrant/bt2_idx
-    # Ensure there's a genome.fna file or make one if not
-    if not os.path.isfile(bt2_db_fasta): #E.g. /vagrant/bt2_idx/genome.fna
-        pprint("No input bowtie2 db specified," \
-               + " concatenating fastas in {}".format(args.input_dir),logfile)
-        #make the directory for the bt2 index if not there
-        if not os.path.isdir(db_dir): 
-            os.mkdir(db_dir) #E.g. mkdir /vagrant/bt2_idx
-        bt2_db_fasta = cat_fasta(args.input_dir,args.bt2_idx)
-        pprint("Created a combined genome for you: {}".format(bt2_db_fasta),logfile)
+    return None
 
-    bowtie_db_cmd = 'bowtie2-build --threads {} -f {} {}'.format(args.threads, bt2_db_fasta, args.bt2_idx)
-    execute(bowtie_db_cmd, logfile)
-
-    return args.bt2_idx
-
-
-def bowtie(bowtie2_db):
+def cuffdiff(gff):
     
     inFmt = False
     if 'fasta' == args.input_fmt:
@@ -338,11 +312,12 @@ if __name__ == '__main__':
     log = open(args.log_fn, 'w', 0)  # Set buffer size to 0 to force flushing to disk
 
     #DEBUG#
-#    log.write('ALL THE ARGUMENTS:' + os.linesep)
-#    pprint(args, log)
-#
-#    log.write('Directory contents for genomes:' + os.linesep)
-#    pprint(os.listdir(args.input_dir),log)
+    if args.debug:
+        log.write('all the arguments:' + os.linesep)
+        pprint(args, log)
+
+        log.write('.gff files in {}:'.format(args.gff_dir) + os.linesep)
+        pprint(glob.glob(args.gff_dir,"*.gff"),log)
     #END DEBUG#
     
     if os.path.isfile(args.bt2_idx + '.1.bt2') or os.path.isfile(args.bt2_idx + '.1.bt2l'):
