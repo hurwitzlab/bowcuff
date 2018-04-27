@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 
-# Authors: Jimmy Thornton <jamesthornton@email.arizona.edu>,
-#          Ken Youens-Clark <kyclark@email.arizona.edu>
+# Authors: Scott G Daniel <scottdaniel@email.arizona.edu>
+#
 
 library("optparse")
 library("plyr")

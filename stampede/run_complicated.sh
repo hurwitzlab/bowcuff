@@ -21,26 +21,19 @@ function lc() {
 
 function HELP() {
     
-    echo "INPUT_DIR="./" #-i | --input-dir"
-    echo "READS_DIR="./" #-r | --reads | --reads-dir"
-    echo "INPUT_DB="genome.fna" #-d | --db | --input-db"
-    echo "INPUT_FMT="fastq" #-f | --fmt | --input-format"
-    echo "KEEP_SAM="FALSE" #-k | --keep-sam"
-    echo "MERGE_OUTPUT="FALSE" #-m | --merge-args"
-    echo "MERGE_NAME="bowtie2-run.sam" #-n | --merge-name"
-    echo "REMOVE_TMP="FALSE" #-z | --remove-tmp"
-    echo "LOG_FN="bowtie2-read-mapping.log" #-l | --log-file"
-    echo "ALIGN_TYPE="end-to-end" #-a | --alignment-type"
-    echo "GLOBAL_PRESETS="sensitive" #-e | --end-to-end-presets"
-    echo "LOCAL_PRESETS="sensitive-local" #-c | --local-presets"
-    echo "NON_DETERMINISTIC="FALSE" #-N | --non-deterministic"
-    echo "MININS="0" #-I | --minins"
-    echo "MAXINS="2000" #-X | --maxins"
+    echo "BAMS="./bowtie2-run.bam" #-b | --bams"
+    echo "GFF_DIR="./genomes" #-g | --gff-dir"
+    echo "GFF="./genomes/genome.gff" #-G | --gff"
+    echo "LOG_FN="cuffdiff.log" #-l | --log-file"
     echo "THREADS="1" #-t | --threads"
-    echo "SING_IMG="bowtie_sam.img" #-S | --sing-img"
+    echo "SING_IMG="cuffKeggR.img" #-S | --sing-img"
     echo "OUT_DIR="./out_dir" #-O | --out-dir"
+    echo "RRNA_GFF="./rRNA.gff" #-M | --mask-gff"
+    echo "DEBUG="FALSE" #-d | --debug"
+    echo "SILENT="FALSE" #-s | --silent"
+    echo "MORE_ARGS="" #-A | --additional"
 
-    echo "See bowtie_batch.py for additional help"
+    echo "See cufflinks.py or make_graphs.R for additional help"
     exit 0
 }
 
@@ -54,48 +47,29 @@ set -u
 #
 # Set up defaults for inputs, constants
 #
-
-INPUT_DIR="./" #-i | --input-dir
-READS_DIR="./" #-r | --reads | --reads-dir
-INPUT_DB=""$INPUT_DIR"/genome.fna" #-d | --db | --input-db
-INPUT_FMT="fastq" #-f | --fmt | --input-format
-#INTERLEAVED="FALSE" #-i | --interleaved
-#READ_TYPES="mixed" #-y | --read-types
-#DISTANCE="1" #-D | --dist
-#FILTER=".py" #-x | --exclude
-#UNPAIR_TERM="unpair" #-u | --unpair-terms
-#PAIR_TERM="pair" #-p | --pair-terms
-KEEP_SAM="FALSE" #-k | --keep-sam
-MERGE_OUTPUT="FALSE" #-m | --merge-args
-MERGE_NAME="bowtie2-run.sam" #-n | --merge-name
-REMOVE_TMP="FALSE" #-z | --remove-tmp
-LOG_FN="bowtie2-read-mapping.log" #-l | --log-file
-ALIGN_TYPE="end-to-end" #-a | --alignment-type
-GLOBAL_PRESETS="sensitive" #-e | --end-to-end-presets
-LOCAL_PRESETS="sensitive-local" #-c | --local-presets
-NON_DETERMINISTIC="FALSE" #-N | --non-deterministic
-#TRIM5="0" #-5 | --trim5
-#TRIM3="0" #-3 |--trim3
-MININS="0" #-I | --minins
-MAXINS="2000" #-X | --maxins
-THREADS="1" #-t | --threads
-SING_IMG="bowtie_sam.img" #-S | --sing-img
-OUT_DIR="./out_dir" #-O | --out-dir
+BAMS="./bowtie2-run.bam" #-b | --bams"
+GFF_DIR="./genomes" #-g | --gff-dir"
+GFF="./genomes/genome.gff" #-G | --gff"
+LOG_FN="cuffdiff.log" #-l | --log-file"
+THREADS="1" #-t | --threads"
+SING_IMG="cuffKeggR.img" #-S | --sing-img"
+OUT_DIR="./out_dir" #-O | --out-dir"
+RRNA_GFF="./rRNA.gff" #-M | --mask-gff"
+DEBUG="FALSE" #-d | --debug"
+SILENT="FALSE" #-s | --silent"
+MORE_ARGS="" #-A | --additional"
 
 #Read the arguments
 # In case you wanted to check what variables were passed
 echo "ARG = $*"
 
-#commented out
-#iy:D:x:u:p:5:3:
-
-while getopts :i:r:d:f:k:mn:zl:a:e:c:NI:X:t:S:O:h ARG; do
+while getopts :b:g:G:l:t:S:O:M:d:s:A:h ARG; do
     case $ARG in
-        i)
-            INPUT_DIR="$OPTARG"
+        b)
+            BAMS="$OPTARG"
             ;;
-        r)
-            READS_DIR="$OPTARG"
+        g)
+            GFF_DIR="$OPTARG"
             ;;
         d)
             INPUT_DB="$OPTARG"
