@@ -3,12 +3,12 @@ OSVersion: trusty
 MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
 %environment
-    PATH="/media/miniconda/bin:$PATH"
+    PATH="/cuffdiff-keggR/scripts:/media/miniconda/bin:$PATH"
 
 %runscript
     echo "By default this runs cuffdiff\n/
     Use exec [image-name] cuffnorm, etc. for other Tuxedo programs"
-    exec cuffdiff "$@"
+    exec cuffKeggR.py "$@"
 
 %post
     echo "Hello from inside the container"
@@ -28,7 +28,10 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     #cleanup    
     conda clean -y --all
     rm -rf /tmp/*
-    cd /media
+    cd /
+
+    git clone https://github.com/hurwitzlab/cuffdiff-keggR.git
+    chmod +x /cuffdiff-keggR/scripts/cuffKeggR.py
 
     #so we dont get those stupid perl warnings
     locale-gen en_US.UTF-8

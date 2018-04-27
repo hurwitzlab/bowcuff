@@ -12,10 +12,9 @@
 #for local testing#####
 #if the singularity.conf is right, then /vagrant should be auto-shared
 export WORK="/vagrant"
-#export GUEST="/work"
 ########################
 
-export OUT_DIR="$WORK/bowtie_test"
+export OUT_DIR="$WORK/cufflinks_test"
 
 #export MY_PARAMRUN="$HOME/launcher/paramrun"
 
@@ -24,8 +23,7 @@ export OUT_DIR="$WORK/bowtie_test"
 #-i "$WORK/genomes"
 
 bash run_simple.sh \
-    -i "$WORK/genomes" \
-    -1 /vagrant/rna/cancer/RNA_cancer_R1_sample_01.fastq.gz,/vagrant/rna/cancer/RNA_cancer_R1_sample_02.fastq.gz,/vagrant/rna/cancer/RNA_cancer_R1_sample_03.fastq.gz \
-    -2 /vagrant/rna/cancer/RNA_cancer_R2_sample_01.fastq.gz,/vagrant/rna/cancer/RNA_cancer_R2_sample_02.fastq.gz,/vagrant/rna/cancer/RNA_cancer_R2_sample_03.fastq.gz \
-    -O $OUT_DIR \
-    -f fastq -t 4
+    -o $OUT_DIR -t 4 \
+    -g $WORK/genomes \
+    $WORK/cancer_out/bowtie2-run.bam \
+    $WORK/control_out/bowtie2-run.bam

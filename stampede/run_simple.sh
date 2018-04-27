@@ -16,7 +16,7 @@
 #
 # Set up defaults for inputs, constants
 #
-SING_IMG="bowtie_sam.img" #-S | --sing-img
+SING_IMG="cuffKeggR.img" #-S | --sing-img
 # can do rest in python because its better
 
 #check for centrifuge image
@@ -34,7 +34,7 @@ fi
 
 function HELP() {
 
-    singularity exec $SING_IMG cufflinks.py -h
+    singularity exec $SING_IMG cuffKeggR.py -h
     
     exit 0
 }
@@ -50,8 +50,8 @@ set -u
 #echo "ARG = $*"
 
 #Run bowtie_batch
-singularity exec $SING_IMG cufflinks.py $@
+singularity exec $SING_IMG cuffKeggR.py $@
 
-echo "Log messages will be in "$OUT_DIR"/cufflinks.log by default"
+echo "Log messages will be in "$OUT_DIR"/cuffdiff.log by default"
 echo "Comments to Scott Daniel <scottdaniel@email.arizona.edu>"
 
