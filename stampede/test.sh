@@ -22,7 +22,7 @@ export OUT_DIR="$WORK/cufflinks_test"
 
 #-i "$WORK/genomes"
 
-bash run_simple.sh \
+bash run.sh \
     -o $OUT_DIR -t 4 \
     -g $WORK/genomes \
     $WORK/cancer_out/bowtie2-run.bam \
