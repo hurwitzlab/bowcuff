@@ -11,10 +11,11 @@
 
 #for local testing#####
 #if the singularity.conf is right, then /vagrant should be auto-shared
-export WORK="/vagrant"
+#export WORK="/vagrant"
+export WORK="$HOME/singularity-vm"
 ########################
 
-export OUT_DIR="$WORK/cufflinks_test"
+export OUT_DIR="$WORK/cuffdiff_test"
 
 #export MY_PARAMRUN="$HOME/launcher/paramrun"
 
@@ -22,8 +23,7 @@ export OUT_DIR="$WORK/cufflinks_test"
 
 #-i "$WORK/genomes"
 
-bash run.sh \
-    -o $OUT_DIR -t 4 \
-    -g $WORK/genomes \
-    $WORK/cancer_out/bowtie2-run.bam \
-    $WORK/control_out/bowtie2-run.bam
+cuffdiff $WORK/genomes/transcripts.gtf \
+    -C sample-sheet.txt \
+    -o $OUT_DIR \
+    -p 4
