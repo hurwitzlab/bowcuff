@@ -13,6 +13,7 @@
 #if the singularity.conf is right, then /vagrant should be auto-shared
 #export WORK="/vagrant"
 export WORK="$HOME/singularity-vm"
+export GFF_DIR="$wORK/gffs" #also has genome.fa
 ########################
 
 export OUT_DIR="$WORK/cuffdiff_test"
@@ -23,7 +24,7 @@ export OUT_DIR="$WORK/cuffdiff_test"
 
 #-i "$WORK/genomes"
 
-cuffdiff $WORK/genomes/transcripts.gtf \
+cuffdiff $GFF_DIR/transcripts.gtf \
     -C sample-sheet.txt \
     -o $OUT_DIR \
     -p 4
