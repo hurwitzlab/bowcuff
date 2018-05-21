@@ -23,7 +23,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     conda install -y -c bioconda htseq
     conda install -y -c bioconda r-optparse 
     conda install -y -c bioconda r-sartools
-    conda install -y -c r r-ggplot2 r-plyr r-r.utils 
+    conda install -y -c r r-ggplot2 r-dplyr r-r.utils r-reshape2 r-rcolorbrewer
     #cleanup    
     conda clean -y --all
     rm -rf /tmp/*
