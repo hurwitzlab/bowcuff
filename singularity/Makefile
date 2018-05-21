@@ -4,7 +4,7 @@ SING231 = /home/vagrant/bin/singularity #2.3.1-dist
 SINGULARITY = $(SING231)
 IMG_NAME = count-deseq.img
 DEF_NAME = image.def
-SIZE = 2536
+SIZE = 4048
 
 help:
 	sudo $(SINGULARITY) exec $(IMG_NAME) run.sh -h

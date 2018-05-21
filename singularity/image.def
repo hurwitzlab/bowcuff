@@ -20,10 +20,10 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
     bash miniconda.sh -b -p /media/miniconda
     PATH="/media/miniconda/bin:$PATH"
+    conda install -y -c bioconda htseq
     conda install -y -c bioconda r-optparse 
-    conda install -y -c r r-rcolorbrewer r-reshape2 
-    conda install -y -c r r-ggplot2 r-dplyr r-plyr r-r.utils r-tidyr
-
+    conda install -y -c bioconda r-sartools
+    conda install -y -c r r-ggplot2 r-plyr r-r.utils 
     #cleanup    
     conda clean -y --all
     rm -rf /tmp/*
