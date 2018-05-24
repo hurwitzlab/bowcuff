@@ -2,10 +2,10 @@
 
 #SBATCH -A iPlant-Collabs
 #SBATCH -N 1
-#SBATCH -n 1
+#SBATCH -n 12
 #SBATCH -t 02:00:00
 #SBATCH -p development
-#SBATCH -J cntrfuge
+#SBATCH -J deseq2
 #SBATCH --mail-type BEGIN,END,FAIL
 #SBATCH --mail-user scottdaniel@email.arizona.edu
 
@@ -16,7 +16,7 @@ export WORK="$HOME/singularity-vm"
 export GFF_DIR="$wORK/gffs" #also has genome.fa
 ########################
 
-export OUT_DIR="$WORK/cuffdiff_test"
+export OUT_DIR="$WORK/deseq_test"
 
 #export MY_PARAMRUN="$HOME/launcher/paramrun"
 
@@ -24,7 +24,8 @@ export OUT_DIR="$WORK/cuffdiff_test"
 
 #-i "$WORK/genomes"
 
-cuffdiff $GFF_DIR/transcripts.gtf \
-    -C sample-sheet.txt \
+bash run.sh -g $GFF_DIR \
+    -b $BAMS_DIR
+    -t sample-sheet.txt \
     -o $OUT_DIR \
-    -p 4
+    -p 12
