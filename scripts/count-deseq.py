@@ -2,10 +2,10 @@
 
 ###############################################################################
 #                                                                             #
-#    cuffKeggR.py                                                             #
+#  count-deseq.py                                                             #
 #                                                                             #
-#    A wrapper script that uses cuffdiff to compare RNA counts between        #
-#    samples at a species level, generates graphs with R                      #
+#  A wrapper script for filtering gffs, counting alignments per protein       #
+#  coding sequence, and performing differential expression with deseq2        #
 #                                                                             #
 #    Copyright (C) Scott G Daniel                                             #
 #                                                                             #
@@ -40,6 +40,7 @@ import sys
 import subprocess
 import argparse
 from pprint import pprint
+import pandas
 
 #WORK env var will be present on TACC
 #But may not be set when testing locally
@@ -51,28 +52,24 @@ if os.getenv('WORK') is None:
 ####################
 
 parser = argparse.ArgumentParser(description=
-        "The script essentially wraps cuffdiff for comparing\n"
-        "RNA counts between samples.\n",
+        "A wrapper script for filtering gffs, counting alignments per protein\n"
+        "coding sequence, and performing differential expression with deseq2.",
         formatter_class=argparse.RawTextHelpFormatter)
 
-inputs = parser.add_argument_group('Required Inputs and Parameters',
-        "<m1>, <m2>, <r> can be comma-separated lists (no whitespace)\n"
-        "and can be specified many times.\n"
-        "E.g. -U file1.fq,file2.fq -U file3.fq.")
+inputs = parser.add_argument_group('Required Inputs and Parameters')
 
-inputs.add_argument('-i', '--input-dir', 
-        dest='input_dir', metavar='DIRECTORY', 
-        default=os.path.join(os.getenv('WORK'),'genomes'),
-        help="The Directory containing individual genomes\n"
-        "that will be pasted together. The created genome.fna\n"
-        "will be indexed for bowtie2")
+inputs.add_argument('-G', '--gff-dir', 
+        dest='gff_dir', metavar='DIRECTORY', 
+        default=os.path.join(os.getenv('WORK'),'gffs'),
+        help="The Directory containing individual gffs\n"
+        "that will be pasted together.\n"
+        "if pasted gff file already exists, this input\n"
+        "will be ignored, Default: $WORK/gffs")
 
-inputs.add_argument('-x', '--bt2-idx', 
-        dest='bt2_idx', metavar='FILENAME', 
-        default=os.path.join(os.getenv('WORK'),'bt2_index/','genome'),
-        help="Index filename prefix (minus trailing .X.bt2).\n"
-        "This will also be the name of the fasta file, E.g. [bt2-idx].fna\n"
-        "NOTE: Bowtie 1 and Bowtie 2 indexes are not compatible.")
+inputs.add_argument('-g', '--gff-file', 
+        dest='gff_file', metavar='FILENAME', 
+        default=os.path.join(os.getenv('WORK'),'gffs/','all.RefSeq.gff'),
+        help="TODO: continue here")
 
 inputs.add_argument('-1', '--m1', 
         dest='reads_forward', metavar='STRING',
