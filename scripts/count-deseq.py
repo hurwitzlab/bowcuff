@@ -69,120 +69,53 @@ inputs.add_argument('-G', '--gff-dir',
 inputs.add_argument('-g', '--gff-file', 
         dest='gff_file', metavar='FILENAME', 
         default=os.path.join(os.getenv('WORK'),'gffs/','all.RefSeq.gff'),
-        help="TODO: continue here")
+        help="")
 
-inputs.add_argument('-1', '--m1', 
-        dest='reads_forward', metavar='STRING',
+inputs.add_argument('-b', '--bams-dir', 
+        dest='bams_dir', metavar='DIRECTORY',
         default='',
-        help="Files with #1 mates, paired with files in <m2>.\n"
-        "Could be gzip'ed (extension: .gz) or bzip2'ed (extension: .bz2).\n")
+        help="")
 
-inputs.add_argument('-2', '--m2', 
-        dest='reads_reverse', metavar='STRING',
+inputs.add_argument('-t', '--target-file', 
+        dest='target_file', metavar='FILENAME',
         default='',
-        help="Files with #2 mates, paired with files in <m1>.\n"
-        "Could be gzip'ed (extension: .gz) or bzip2'ed (extension: .bz2).\n")
+        help="")
 
-inputs.add_argument('-U', '--unpaired', 
-        dest='reads_unpaired', metavar='STRING',
-        default='',
-        help="Files with unpaired reads.\n"
-        "Could be gzip'ed (extension: .gz) or bzip2'ed (extension: .bz2).")
-
-inputs.add_argument('-f', '--fmt', '--input-format', 
-        dest='input_fmt', 
-        choices=['fastq', 'fasta', 'fq'],
-        default='fastq',
-        help="File format of reads to be aligned. \n"
-        "Compressed files (*.gz, *.tar.gz) will be automatically\n"
-        "recognized.")
+inputs.add_argument('-o', '--out-dir', 
+        dest='out_dir', metavar='DIRECTORY',
+        default=os.getcwd,
+        help="Output directory to put all the\n"
+        "results in.")
 
 gen_opts = parser.add_argument_group('General Options')  
 
-gen_opts.add_argument('-O', '--out-dir', dest='out_dir', type=str,
-        default=os.getcwd, help="Output directory to put all the\n"
-        "results in.")
+gen_opts.add_argument('-d', '--debug', type=bool,
+        default=False, help="Extra logging messages.") 
 
-gen_opts.add_argument('-k', '--keep-sam', dest='keep_sam', 
-        action='store_true',
-        help="If enabled, SAM files will be preserved \n"
-        "during BAM file generation. Without this option,\n"
-        "THERE WILL BE NO SAM FILES.")
-
-gen_opts.add_argument('-n', '--sam-name', 
-        dest='sam_name', metavar='FILENAME', 
-        default='bowtie2-run.sam',
-        help="Filename to use for output sam/bam.")
-
-gen_opts.add_argument('-l', '--log-file', dest='log_fn', 
-        metavar='FILENAME', default='bowtie2-read-mapping.log',
-        help="Log file name")
-
-bowtie2_opts = parser.add_argument_group('Bowtie2 Alignment Options')
-
-bowtie2_opts.add_argument('-a', '--alignment-type', 
-        dest='align_type', choices=['end-to-end', 'local'], 
-        default='end-to-end',
-        help="Whether the entire read must align \n"
-        "(end-to-end) or only a local region (local).")
-
-bowtie2_opts.add_argument('-e', '--end-to-end-presets', 
-        dest='global_presets', metavar='STRING',
-        choices=['very-fast', 'fast', 'sensitive', 'very-sensitive'],
-        default="sensitive", 
-        help="Presets for end-to-end alignments:\n"
-        "very-fast: -D 5 -R 1 -N 0 -L 22 -i S,0,2.50\n"
-        "fast: -D 10 -R 2 -N 0 -L 22 -i S,0,2.50\n"
-        "sensitive: -D 15 -R 2 -N 0 -L 22 -i S,1,1.15 (default)\n"
-        "very-sensitive: -D 20 -R 3 -N 0 -L 20 -i S,1,0.50")
-
-bowtie2_opts.add_argument('-L', '--local-presets', 
-        dest='local_presets', metavar='STRING',
-        choices=['very-fast-local', 'fast-local', 
-            'sensitive-local', 'very-sensitive-local'],
-        default='sensitive-local',
-        help="Presets for local alignments:\n"
-        "very-fast-local: -D 5 -R 1 -N 0 -L 25 -i S,1,2.00\n"
-        "fast-local: -D 10 -R 2 -N 0 -L 22 -i S,1,1.75\n"
-        "sensitive-local: -D 15 -R 2 -N 0 -L 20 -i S,1,0.75 (default)\n"
-        "very-sensitive-local: -D 20 -R 3 -N 0 -L 20 -i S,1,0.50")
-
-bowtie2_opts.add_argument('-N', '--non-deterministic', 
-        dest='non_deterministic', action='store_true',
-        help="Bowtie 2 will use the current time to \n"
-        "re-initialize the pseudo-random number generator.\n"
-        "Useful when the input consists of many identical reads.")
-
-bowtie2_opts.add_argument('-5', '--trim5', 
-        dest='trim5', metavar='INT', 
-        type=int, default=0,
-        help="Trim X bases from 5'/left end of reads.")
-
-bowtie2_opts.add_argument('-3', '--trim3', 
-        dest='trim3', metavar='INT', 
-        type=int, default=0,
-        help="Trim X bases from 3'/right end of reads.")
-
-bowtie2_opts.add_argument('-I', '--minins', 
-        dest='minins', metavar='INT', 
-        type=int, default=0,
-        help="minimum fragment length (0)")
-
-bowtie2_opts.add_argument('-X', '--maxins', 
-        dest='maxins', metavar='INT', 
-        type=int, default=2000,
-        help="maximum fragment length (2000)")
-
-bowtie2_opts.add_argument('-t', '--threads', 
+gen_opts.add_argument('-t', '--threads', 
         dest='threads', metavar='INT', 
         type=int, default=1,
         help="number of alignment threads to launch (1)")
 
-bowtie2_opts.add_argument('--additional',
-        dest='more_args', metavar='STRING',
-        default='',
-        help="Additional arguments to pass to bowtie2.\n"
-        "Put options in single quotes to protect from shell.")
+gen_opts.add_argument('-l', '--log-file', dest='log_fn', 
+        metavar='FILENAME', default='count-deseq.log',
+        help="Log file name")
+
+program_opts = parser.add_argument_group('Specific program options')
+
+program_opts.add_argument('-C', '--htseq-count-options', 
+        dest='htseq_count_opt_txt', metavar='FILENAME',
+        help="File with additional options for htseq-count\n"
+        "Options must be one per line like so:\n"
+        "-o1 option1\n"
+        "-o2 option2")
+
+program_opts.add_argument('-D', '--deseq2-options', 
+        dest='deseq2_opt_txt', metavar='FILENAME',
+        help="File with additional options for deseq2\n"
+        "Options must be one per line like so:\n"
+        "-o1 option1\n"
+        "-o2 option2")
 
 args = parser.parse_args()
 
@@ -192,23 +125,14 @@ args = parser.parse_args()
 
 #check for args that need to be set (the app.json / agave api should do this too)
 
-###############
-# FUNCTIONS ###
-###############
+#######################
+# GENERAL FUNCTIONS ###
+#######################
 
 def error(msg):
     sys.stderr.write("ERROR: {}\n".format(msg))
     sys.stderr.flush()
     sys.exit(1)
-
-def cat_gff(gff_dir,gff):
-    file_list = glob.glob(gff_dir + "/*.gff")
-    with open(gff+'.gff','w') as w_file:
-        for filen in file_list:
-            with open(filen, 'rU') as o_file:
-                write(o_file, w_file)
-
-        return w_file.name
 
 
 def execute(command, logfile):
@@ -220,79 +144,59 @@ def execute(command, logfile):
 
     logfile.write(stderr + os.linesep)
 
-def make_graphs():
+#############################
+# Script-specific Functions #
+#############################
 
-    return None
+def cat_gff(gff_dir,gff):
+    file_list = glob.glob(gff_dir + "/*.gff")
+    with open(gff+'.gff','w') as w_file:
+        for filen in file_list:
+            with open(filen, 'rU') as o_file:
+                write(o_file, w_file)
 
-def cuffdiff(gff):
-    
-    inFmt = False
-    if 'fasta' == args.input_fmt:
-        inFmt = '-f'
-    if 'fastq' == args.input_fmt:
-        inFmt = '-q'
-    if 'fq' == args.input_fmt:
-        inFmt = '-q'
+        return w_file.name
 
-    if not inFmt:
-        error('No format selected during bowtie2 search.')
-
-    #i wish python had case switching! ... this is probably more complicated than it needs to be!
-    if args.reads_unpaired and args.reads_forward and args.reads_reverse:
-        input_cmd = '-1 {} -2 {} -U {}'.format(args.reads_forward,args.reads_reverse,args.reads_unpaired)
-    elif args.reads_unpaired and not (args.reads_forward and args.reads_reverse):
-        input_cmd = '-U {}'.format(args.reads_unpaired)
-    elif (args.reads_forward and args.reads_reverse) and not args.reads_unpaired:
-        input_cmd = '-1 {} -2 {}'.format(args.reads_forward,args.reads_reverse)
-    else:
-        error("Something is wrong in how the input string is formatted\n"
-        "Did you only enter forward reads? Did you only enter reverse reads?\n")
-
-
-    bowtie2_cmd = 'bowtie2 {} --phred33 --{} --{} -p {} -I {} -X {} --no-unal {} -x {} {}'.format(
-        inFmt, args.align_type, preset, args.threads, args.minins, 
-        args.maxins, args.more_args, bowtie2_db, input_cmd)
-
-    sam_out = os.path.join(args.out_dir, args.sam_name)
-
-    return [(bowtie2_cmd, sam_out)]
-
-def to_sam(cmd2run, keep_sam, logfile):
+def filter_gff(gff_in,gff_out):
 
     processCall = ''
 
-    if len(cmd2run) > 1:  # Alternatively, if sam_output
+    processCall = 'bash filtering-gffs.sh {} > {}'.format(gff_in,gff_out)
 
-        for (bowtie2, sam_out) in cmd2run:
+    execute(processCall, logfile)
 
-            bam_out = sam_out.replace('sam', 'bam')
+def read_targets(target_file):
 
-            # Keep sam file or go directly to bam. Two ways of keeping sam file... one of which sometimes hasn't worked
+    #TODO: read targets file with pandas read_table method
+    #then return list of tuples of (bam_file, count_file)
+    #targets file will also be used in the SARTools deseq wrapper
+    return bams_and_counts
 
-            if keep_sam:
-                processCall = '{1} -S {2} && samtools view --threads {0} -Sb -o {3} {2}'.format(args.threads, bowtie2, sam_out, bam_out)
+def htseq_count(gff, bams_and_counts):
+    
+    processCall = ''
 
-            else:
-                processCall = '{1} | samtools view --threads {0} -Sb - > {2}'.format(args.threads, bowtie2, bam_out)
+    for bam_file, count_file in bams_and_counts:
 
-            execute(processCall, logfile)
+        #TODO: the -a -t -i are htseq-count options that will be taken from args.htseq_count_opt_txt 
+        processCall = 'samtools view -@ {} -h {} | htseq-count -a 0 -t CDS -i product - {} > {}'.format(args.threads,
+                bam_file, gff, count_file)
 
-    if len(cmd2run) == 1:  # just double-checking
+        execute(processCall, logfile)
 
-        bowtie2, sam_out = cmd2run[0]
-        bam_out = sam_out.replace('sam', 'bam')
+def run_deseq():
 
-        if keep_sam:
-            processCall = '{1} -S {2} && samtools view --threads {0} -Sb -o {3} {2}'.format(args.threads, bowtie2, sam_out, bam_out)
+    #TODO: call deseq2.r and print to logfile
+    #SARTools deseq wrapper
+    #https://github.com/PF2-pasteur-fr/SARTools/blob/master/template_script_DESeq2_CL.r
+    return None
 
-        else:
-            processCall = '{1} | samtools view --threads {0} -Sb - > {2}'.format(args.threads, bowtie2, bam_out)
-            #output = subprocess.check_output(processCall, shell=True)  # Trusted input only!
+def make_species_graphs():
 
-        execute(processCall, logfile)  # bowtie uses stderr to print out args
-
-    if (len(cmd2run) < 1) and (len(cmd2run) != 1):  # This *should not* ever be triggered
-        logfile.write('ERROR: Not >1 or ==1, but sam file specified')
+    #TODO: call counts_per_species.r and print to logfile
+    #My own script based on work in 
+    #https://github.com/hurwitzlab/bacteria-bowtie/tree/master/scripts/R-interactive
+    return None
 
 ##################
 # THE MAIN LOOP ##
@@ -317,17 +221,6 @@ if __name__ == '__main__':
         pprint(glob.glob(args.gff_dir,"*.gff"),log)
     #END DEBUG#
     
-    if os.path.isfile(args.bt2_idx + '.1.bt2') or os.path.isfile(args.bt2_idx + '.1.bt2l'):
-        log.write('Bowtie2 index, {}, already exists... assuming its ok'.format(args.bt2_idx) + os.linesep)
-        bt2_db_base = args.bt2_idx
-    else:
-        bt2_db_base = prepare_bowtie_db(args.input_dir, args.bt2_idx, log)
-
-    log.write('Bowtie2 base db: {}'.format(bt2_db_base) + os.linesep)
-
-    cmd_and_sam = bowtie(bt2_db_base)
-
-    to_sam(cmd_and_sam, args.keep_sam, log)
 
     log.write('Program Complete, Hopefully it Worked!')
     log.close()
