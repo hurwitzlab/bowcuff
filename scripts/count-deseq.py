@@ -60,7 +60,7 @@ inputs = parser.add_argument_group('Required Inputs and Parameters')
 
 inputs.add_argument('-G', '--gff-dir', 
         dest='gff_dir', metavar='DIRECTORY', 
-        default=os.path.join(os.getenv('WORK'),'gffs'),
+        default=os.path.join(os.getenv('WORK'),'genomes'),
         help="The Directory containing individual gffs\n"
         "that will be pasted together.\n"
         "if pasted gff file already exists, this input\n"
@@ -68,7 +68,7 @@ inputs.add_argument('-G', '--gff-dir',
 
 inputs.add_argument('-g', '--gff-file', 
         dest='gff_file', metavar='FILENAME', 
-        default=os.path.join(os.getenv('WORK'),'gffs/','all.RefSeq.gff'),
+        default=os.path.join(os.getenv('WORK'),'all.RefSeq.gff'),
         help="")
 
 inputs.add_argument('-b', '--bams-dir', 
@@ -76,14 +76,14 @@ inputs.add_argument('-b', '--bams-dir',
         default='',
         help="")
 
-inputs.add_argument('-t', '--target-file', 
+inputs.add_argument('-T', '--target-file', 
         dest='target_file', metavar='FILENAME',
         default='',
         help="")
 
 inputs.add_argument('-o', '--out-dir', 
         dest='out_dir', metavar='DIRECTORY',
-        default=os.getcwd,
+        default=os.getcwd(),
         help="Output directory to put all the\n"
         "results in.")
 
@@ -105,6 +105,7 @@ program_opts = parser.add_argument_group('Specific program options')
 
 program_opts.add_argument('-C', '--htseq-count-options', 
         dest='htseq_count_opt_txt', metavar='FILENAME',
+        default=os.path.join(os.getenv('WORK'),'htseq_options.txt'),
         help="File with additional options for htseq-count\n"
         "Options must be one per line like so:\n"
         "-o1 option1\n"
@@ -112,20 +113,13 @@ program_opts.add_argument('-C', '--htseq-count-options',
 
 program_opts.add_argument('-D', '--deseq2-options', 
         dest='deseq2_opt_txt', metavar='FILENAME',
+        default=os.path.join(os.getenv('WORK'),'deseq2_options.txt'),
         help="File with additional options for deseq2\n"
         "Options must be one per line like so:\n"
         "-o1 option1\n"
         "-o2 option2")
 
 args = parser.parse_args()
-
-####################
-# SETS AND CHECKS ##
-####################
-
-#check for args that need to be set (the app.json / agave api should do this too)
-htseq_count_options = parse_options_text(args.htseq_count_opt_txt)
-deseq2_options = parse_options_text(args.deseq2_opt_txt)
 
 #######################
 # GENERAL FUNCTIONS ###
@@ -167,12 +161,13 @@ def execute(command, logfile):
 
 def cat_gff(gff_dir,gff):
     file_list = glob.glob(gff_dir + "/*.gff")
-    with open(gff+'.gff','w') as w_file:
+    with open(gff,'w') as outfile:
         for filen in file_list:
-            with open(filen, 'rU') as o_file:
-                write(o_file, w_file)
+            with open(filen, 'r') as infile:
+                for line in infile:
+                    outfile.write(line)
 
-        return w_file.name
+        return outfile.name
 
 def filter_gff(gff_in,gff_out):
 
@@ -180,7 +175,7 @@ def filter_gff(gff_in,gff_out):
 
     processCall = 'bash filtering-gffs.sh {} > {}'.format(gff_in,gff_out)
 
-    execute(processCall, logfile)
+    execute(processCall, log)
 
 def read_targets(target_file):
 
@@ -199,7 +194,7 @@ def htseq_count(gff, bams_and_counts):
         processCall = 'samtools view -@ {} -h {} | htseq-count -a 0 -t CDS -i product - {} > {}'.format(args.threads,
                 bam_file, gff, count_file)
 
-        execute(processCall, logfile)
+        execute(processCall, log)
 
 def run_deseq():
 
@@ -215,6 +210,14 @@ def make_species_graphs():
     #https://github.com/hurwitzlab/bacteria-bowtie/tree/master/scripts/R-interactive
     return None
 
+####################
+# SETS AND CHECKS ##
+####################
+
+#check for args that need to be set (the app.json / agave api should do this too)
+htseq_count_options = parse_options_text(args.htseq_count_opt_txt)
+deseq2_options = parse_options_text(args.deseq2_opt_txt)
+
 ##################
 # THE MAIN LOOP ##
 ##################
@@ -227,7 +230,7 @@ if __name__ == '__main__':
 
     #make the log file
     args.log_fn = os.path.join(args.out_dir,args.log_fn)
-    log = open(args.log_fn, 'w', 0)  # Set buffer size to 0 to force flushing to disk
+    log = open(args.log_fn, 'wb', 0)  # Set buffer size to 0 to force flushing to disk
 
     #DEBUG#
     if args.debug:
