@@ -124,10 +124,27 @@ args = parser.parse_args()
 ####################
 
 #check for args that need to be set (the app.json / agave api should do this too)
+htseq_count_options = parse_options_text(args.htseq_count_opt_txt)
+deseq2_options = parse_options_text(args.deseq2_opt_txt)
 
 #######################
 # GENERAL FUNCTIONS ###
 #######################
+
+#really basic checker, check that options file exists and then check that each line begins with a '-', then parse
+def parse_options_text(options_txt_path):
+    if not (os.path.isfile(options_txt_path)):
+        print("Options text is not a file")
+        return None
+    else:
+        with open(options_txt_path) as options_txt:
+            for line in options_txt:
+                if not line.startswith('-'):
+                    print("Skipping line that doesnt have hyphen")
+                else:
+                    options_string += line.replace('\n', ' ')
+
+    return options_string
 
 def error(msg):
     sys.stderr.write("ERROR: {}\n".format(msg))
@@ -221,6 +238,22 @@ if __name__ == '__main__':
         pprint(glob.glob(args.gff_dir,"*.gff"),log)
     #END DEBUG#
     
+    #GFF munging
+    if not os.path.isfile(args.gff_file):
+        print("Did not find a big gff file created so")
+        print("Catting together a gff file at the path: {}".format(args.gff_file))
+        gff_name = cat_gff(args.gff_dir,args.gff_file)
+        print("Created {}".format(gff_name))
+    else:
+        gff_name = os.path.basename(args.gff_file)
+        print("Using {}".format(gff_name))
+
+    #these three lines could be in the filter gff function
+    gff_old_name, ext = os.path.splitext(args.gff_file)
+    gff_new_name = gff_old_name + '-CDS'
+    gff_out = gff_new_name + ext
+    filter_gff(args.gff_file,gff_out)
+    print("Filtered {} into {} for you".format(os.path.basename(args.gff_file),os.path.basename(gff_out)))
 
     log.write('Program Complete, Hopefully it Worked!')
     log.close()
