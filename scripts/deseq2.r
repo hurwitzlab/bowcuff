@@ -12,7 +12,7 @@ rm(list=ls())                                        # remove all the objects fr
 library(optparse)                                    # to run the script in command lines
 
 # options list with associated default value.
-option_list <- list( 
+option_list <- list(
 make_option(c("-P", "--projectName"),
 			default=basename(getwd()),
 			dest="projectName",
@@ -37,10 +37,10 @@ make_option(c("-F", "--featuresToRemove"),
 			default="alignment_not_unique,ambiguous,no_feature,not_aligned,too_low_aQual",
 			dest="FTR",
 			help="names of the features to be removed, more than once can be specified [default: %default]"),
-			
+
 make_option(c("-v", "--varInt"),
 			default="group",
-			dest="varInt", 
+			dest="varInt",
 			help="factor of interest [default: %default]"),
 
 make_option(c("-c", "--condRef"),
@@ -55,12 +55,12 @@ make_option(c("-b", "--batch"),
 
 make_option(c("-f", "--fitType"),
 			default="parametric",
-			dest="fitType", 
+			dest="fitType",
 			help="mean-variance relationship: [default: %default] or local"),
 
 make_option(c("-o", "--cooksCutoff"),
 			default=TRUE,
-			dest="cooksCutoff", 
+			dest="cooksCutoff",
 			help="perform the outliers detection (default is TRUE)"),
 
 make_option(c("-i", "--independentFiltering"),
@@ -70,22 +70,22 @@ make_option(c("-i", "--independentFiltering"),
 
 make_option(c("-a", "--alpha"),
 			default=0.05,
-			dest="alpha", 
+			dest="alpha",
 			help="threshold of statistical significance [default: %default]"),
 
 make_option(c("-p", "--pAdjustMethod"),
 			default="BH",
-			dest="pAdjustMethod", 
+			dest="pAdjustMethod",
 			help="p-value adjustment method: \"BH\" or \"BY\" [default: %default]"),
 
 make_option(c("-T", "--typeTrans"),
 			default="VST",
-			dest="typeTrans", 
+			dest="typeTrans",
 			help="transformation for PCA/clustering: \"VST\" ou \"rlog\" [default: %default]"),
 
 make_option(c("-l", "--locfunc"),
 			default="median",
-			dest="locfunc", 
+			dest="locfunc",
 			help="median or shorth to estimate the size factors [default: %default]"),
 
 make_option(c("-C", "--colors"),
@@ -103,7 +103,7 @@ make_option(c("-g", "--forceCairoGraph"),
 
 # now parse the command line to check which option is given and get associated values
 parser <- OptionParser(usage="usage: %prog [options]",
-					   option_list=option_list, 
+					   option_list=option_list,
 					   description="Compare two or more biological conditions in a RNA-Seq framework with DESeq2.",
 					   epilogue="For comments, bug reports etc... please contact Hugo Varet <hugo.varet@pasteur.fr>")
 opt <- parse_args(parser, args=commandArgs(trailingOnly=TRUE), positional_arguments=0)$options
@@ -159,8 +159,12 @@ problem <- checkParameters.DESeq2(projectName=projectName,author=author,targetFi
                        independentFiltering=independentFiltering,alpha=alpha,pAdjustMethod=pAdjustMethod,
                        typeTrans=typeTrans,locfunc=locfunc,colors=colors)
 if (problem) quit(save="yes")
-					   
+
 # loading target file
+tempTable = read.delim(targetFile)
+sanitized_table = tempTable[,c('label','count_files','condition')]
+write.table(sanitized_table,file = "sanitized.txt",sep = "\t",row.names = F,col.names = T)
+targetFile = "sanitized.txt"
 target <- loadTargetFile(targetFile=targetFile, varInt=varInt, condRef=condRef, batch=batch)
 
 # loading counts
@@ -179,7 +183,7 @@ exploreCounts(object=out.DESeq2$dds, group=target[,varInt], typeTrans=typeTrans,
 
 # summary of the analysis (boxplots, dispersions, diag size factors, export table, nDiffTotal, histograms, MA plot)
 summaryResults <- summarizeResults.DESeq2(out.DESeq2, group=target[,varInt], col=colors,
-                                          independentFiltering=independentFiltering, 
+                                          independentFiltering=independentFiltering,
                                           cooksCutoff=cooksCutoff, alpha=alpha)
 
 # save image of the R session
