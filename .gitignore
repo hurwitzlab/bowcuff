@@ -60,3 +60,4 @@ dkms.conf
 *.gff
 *.log
 test-options.txt
+.DS_Store

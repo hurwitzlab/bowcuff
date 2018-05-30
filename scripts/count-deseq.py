@@ -40,7 +40,7 @@ import sys
 import subprocess
 import argparse
 from pprint import pprint
-import pandas
+import pandas as pd
 
 #WORK env var will be present on TACC
 #But may not be set when testing locally
@@ -178,27 +178,39 @@ def filter_gff(gff_in,gff_out):
 
     execute(processCall)
 
+    return gff_out
+
 def read_targets(target_file):
 
-    #TODO: read targets file with pandas read_table method
+    bams_and_counts = []
+    #read targets file with pandas read_table method
     #then return list of tuples of (bam_file, count_file)
     #targets file will also be used in the SARTools deseq wrapper
+    if os.path.isfile(target_file):
+        targets = pd.read_table(target_file,delimiter='\t',header=0)
+
+    for row in targets.itertuples(index=True, name='Pandas'):
+        bams_and_counts.append([getattr(row,'bam_files'),getattr(row,'count_files')])
+
     return bams_and_counts
 
 def htseq_count(gff, bams_and_counts):
     
+    htseq_count_options = parse_options_text(args.htseq_count_opt_txt)
+
     processCall = ''
 
     for bam_file, count_file in bams_and_counts:
-
-        #TODO: the -a -t -i are htseq-count options that will be taken from args.htseq_count_opt_txt 
-        processCall = 'samtools view -@ {} -h {} | htseq-count -a 0 -t CDS -i product - {} > {}'.format(args.threads,
-                bam_file, gff, count_file)
+        
+        bam_path = os.path.join(args.bams_dir, bam_file)
+        count_path = os.path.join(args.out_dir, count_file)
+        processCall = 'samtools view -@ {} -h {} | htseq-count {} - {} > {}'.format(args.threads, bam_path, htseq_count_options, gff, count_path)
 
         execute(processCall)
 
 def run_deseq():
 
+    deseq2_options = parse_options_text(args.deseq2_opt_txt)
     #TODO: call deseq2.r 
     #SARTools deseq wrapper
     #https://github.com/PF2-pasteur-fr/SARTools/blob/master/template_script_DESeq2_CL.r
@@ -216,8 +228,6 @@ def make_species_graphs():
 ####################
 
 #check for args that need to be set (the app.json / agave api should do this too)
-htseq_count_options = parse_options_text(args.htseq_count_opt_txt)
-deseq2_options = parse_options_text(args.deseq2_opt_txt)
 
 ##################
 # THE MAIN LOOP ##
@@ -254,5 +264,7 @@ if __name__ == '__main__':
     gff_out = gff_new_name + ext
     filter_gff(args.gff_file,gff_out)
     print("Filtered {} into {} for you\n".format(os.path.basename(args.gff_file),os.path.basename(gff_out)))
+
+    htseq_count(gff_out, read_targets(args.target_file))
 
     print('Program Complete, Hopefully it Worked!')
