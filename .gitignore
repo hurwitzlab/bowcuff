@@ -59,3 +59,4 @@ dkms.conf
 *.Rhistory
 *.gff
 *.log
+test-options.txt

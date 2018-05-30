@@ -89,17 +89,13 @@ inputs.add_argument('-o', '--out-dir',
 
 gen_opts = parser.add_argument_group('General Options')  
 
-gen_opts.add_argument('-d', '--debug', type=bool,
-        default=False, help="Extra logging messages.") 
+gen_opts.add_argument('-d', '--debug', action='store_true',
+        help="Extra logging messages.") 
 
 gen_opts.add_argument('-t', '--threads', 
         dest='threads', metavar='INT', 
         type=int, default=1,
         help="number of alignment threads to launch (1)")
-
-gen_opts.add_argument('-l', '--log-file', dest='log_fn', 
-        metavar='FILENAME', default='count-deseq.log',
-        help="Log file name")
 
 program_opts = parser.add_argument_group('Specific program options')
 
@@ -128,15 +124,20 @@ args = parser.parse_args()
 #really basic checker, check that options file exists and then check that each line begins with a '-', then parse
 def parse_options_text(options_txt_path):
     if not (os.path.isfile(options_txt_path)):
-        print("Options text is not a file")
+        print("Options text {} does not exist or is not a file\n".format(options_txt_path))
         return None
     else:
+        options_string = ''
         with open(options_txt_path) as options_txt:
             for line in options_txt:
                 if not line.startswith('-'):
-                    print("Skipping line that doesnt have hyphen")
+                    print("Skipping line that doesnt have hyphen\n")
                 else:
                     options_string += line.replace('\n', ' ')
+
+    if args.debug:
+        print("These are the options for {}:\n".format(options_txt_path))
+        print("{}\n".format(options_string))
 
     return options_string
 
@@ -146,14 +147,14 @@ def error(msg):
     sys.exit(1)
 
 
-def execute(command, logfile):
+def execute(command):
 
-    logfile.write('Executing {}'.format(command) + os.linesep)
+    print('Executing {}'.format(command) + os.linesep)
     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                shell=True)
     (stdout, stderr) = process.communicate()
 
-    logfile.write(stderr + os.linesep)
+    print(stderr.decode() + os.linesep)
 
 #############################
 # Script-specific Functions #
@@ -175,7 +176,7 @@ def filter_gff(gff_in,gff_out):
 
     processCall = 'bash filtering-gffs.sh {} > {}'.format(gff_in,gff_out)
 
-    execute(processCall, log)
+    execute(processCall)
 
 def read_targets(target_file):
 
@@ -194,18 +195,18 @@ def htseq_count(gff, bams_and_counts):
         processCall = 'samtools view -@ {} -h {} | htseq-count -a 0 -t CDS -i product - {} > {}'.format(args.threads,
                 bam_file, gff, count_file)
 
-        execute(processCall, log)
+        execute(processCall)
 
 def run_deseq():
 
-    #TODO: call deseq2.r and print to logfile
+    #TODO: call deseq2.r 
     #SARTools deseq wrapper
     #https://github.com/PF2-pasteur-fr/SARTools/blob/master/template_script_DESeq2_CL.r
     return None
 
 def make_species_graphs():
 
-    #TODO: call counts_per_species.r and print to logfile
+    #TODO: call counts_per_species.r
     #My own script based on work in 
     #https://github.com/hurwitzlab/bacteria-bowtie/tree/master/scripts/R-interactive
     return None
@@ -228,35 +229,30 @@ if __name__ == '__main__':
     if not os.path.isdir(args.out_dir):
         os.mkdir(args.out_dir)
 
-    #make the log file
-    args.log_fn = os.path.join(args.out_dir,args.log_fn)
-    log = open(args.log_fn, 'wb', 0)  # Set buffer size to 0 to force flushing to disk
-
     #DEBUG#
     if args.debug:
-        log.write('all the arguments:' + os.linesep)
-        pprint(args, log)
+        print('all the arguments:' + os.linesep)
+        pprint(args); print()
 
-        log.write('.gff files in {}:'.format(args.gff_dir) + os.linesep)
-        pprint(glob.glob(args.gff_dir,"*.gff"),log)
+        print('.gff files in {}:'.format(args.gff_dir) + os.linesep)
+        pprint(glob.glob(args.gff_dir + "/*.gff")); print()
     #END DEBUG#
     
     #GFF munging
     if not os.path.isfile(args.gff_file):
         print("Did not find a big gff file created so")
-        print("Catting together a gff file at the path: {}".format(args.gff_file))
+        print("Catting together a gff file at the path: {}\n".format(args.gff_file))
         gff_name = cat_gff(args.gff_dir,args.gff_file)
-        print("Created {}".format(gff_name))
+        print("Created {}\n".format(gff_name))
     else:
         gff_name = os.path.basename(args.gff_file)
-        print("Using {}".format(gff_name))
+        print("Using {}\n".format(gff_name))
 
     #these three lines could be in the filter gff function
     gff_old_name, ext = os.path.splitext(args.gff_file)
     gff_new_name = gff_old_name + '-CDS'
     gff_out = gff_new_name + ext
     filter_gff(args.gff_file,gff_out)
-    print("Filtered {} into {} for you".format(os.path.basename(args.gff_file),os.path.basename(gff_out)))
+    print("Filtered {} into {} for you\n".format(os.path.basename(args.gff_file),os.path.basename(gff_out)))
 
-    log.write('Program Complete, Hopefully it Worked!')
-    log.close()
+    print('Program Complete, Hopefully it Worked!')
