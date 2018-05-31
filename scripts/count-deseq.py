@@ -64,30 +64,41 @@ inputs.add_argument('-G', '--gff-dir',
         help="The Directory containing individual gffs\n"
         "that will be pasted together.\n"
         "if pasted gff file already exists, this input\n"
-        "will be ignored, Default: $WORK/gffs")
+        "will be ignored, [ Default = $WORK/gffs ]")
 
 inputs.add_argument('-g', '--gff-file', 
         dest='gff_file', metavar='FILENAME', 
         default=os.path.join(os.getenv('WORK'),'all.RefSeq.gff'),
-        help="")
+        help="The gff file with annotations for the genome.\n"
+        "This will be filtered for use with htseq-count.\n"
+        " [ Default = $WORK/all.RefSeq.gff ] ")
 
 inputs.add_argument('-b', '--bams-dir', 
         dest='bams_dir', metavar='DIRECTORY',
-        default='',
-        help="")
+        default=os.path.join(os.getenv('WORK'),'bams'),
+        help="Directory containing bams to process.\n"
+        " [ Default = $WORK/bams ]")
 
-inputs.add_argument('-T', '--target-file', 
-        dest='target_file', metavar='FILENAME',
-        default='',
-        help="")
+inputs.add_argument('-m', '--metadata', 
+        dest='metadata', metavar='FILENAME',
+        default='metadata.txt',
+        help="File containing file / sample information.\n"
+        "Use the metadata_template to start and DO NOT change\n"
+        "headings. [ Default = metadata.txt ]")
 
 inputs.add_argument('-o', '--out-dir', 
         dest='out_dir', metavar='DIRECTORY',
         default=os.getcwd(),
         help="Output directory to put all the\n"
-        "results in.")
+        "results in. [ Default = Current working dir ]")
 
 gen_opts = parser.add_argument_group('General Options')  
+
+gen_opts.add_argument('-s', '--skip-counting', action='store_true',
+        help="Skip htseq-count step and go directly to deseq2.\n"
+        "In this case, you do not need to specify the bams_dir\n"
+        "or gff_dir/file, BUT the out_dir must be created and contain\n"
+        "the counts as specified in the metadata.txt.")
 
 gen_opts.add_argument('-d', '--debug', action='store_true',
         help="Extra logging messages.") 
@@ -95,19 +106,20 @@ gen_opts.add_argument('-d', '--debug', action='store_true',
 gen_opts.add_argument('-t', '--threads', 
         dest='threads', metavar='INT', 
         type=int, default=1,
-        help="number of alignment threads to launch (1)")
+        help="number of alignment threads to launch.\n"
+        " [ Default = 1 ] ")
 
 program_opts = parser.add_argument_group('Specific program options')
 
 program_opts.add_argument('-v', '--varInt',
         dest='varInt', default='condition',
-        help="Factor of interest [ default = condition ]\n"
+        help="Factor of interest [ Default = condition ]\n"
         "This should not have to be changed if you are using the\n"
         "metadata_template.txt.")
 
 program_opts.add_argument('-c', '--condRef',
         dest='condRef', default='control',
-        help="Reference biological condition [ default = control ]\n"
+        help="Reference biological condition [ Default = control ]\n"
         "Needed or deseq2 will not know what to compare against.")
 
 program_opts.add_argument('-C', '--htseq-count-options', 
@@ -191,14 +203,14 @@ def filter_gff(gff_in,gff_out):
 
     return gff_out
 
-def read_targets(target_file):
+def read_targets(metadata):
 
     bams_and_counts = []
     #read targets file with pandas read_table method
     #then return list of tuples of (bam_file, count_file)
     #targets file will also be used in the SARTools deseq wrapper
-    if os.path.isfile(target_file):
-        targets = pd.read_table(target_file,delimiter='\t',header=0)
+    if os.path.isfile(metadata):
+        targets = pd.read_table(metadata,delimiter='\t',header=0)
 
     for row in targets.itertuples(index=True, name='Pandas'):
         bams_and_counts.append([getattr(row,'bam_files'),getattr(row,'count_files')])
@@ -229,9 +241,13 @@ def run_deseq():
     #SARTools deseq wrapper
     #https://github.com/PF2-pasteur-fr/SARTools/blob/master/template_script_DESeq2_CL.r
 
-    processCall = 'deseq2.r --targetFile {} --rawDir {}\
-            --varInt {} --condRef {}'.format(args.target_file, args.out_dir,
-                    args.varInt, args.condRef)
+    processCall = './deseq2.r --targetFile {} --rawDir {}\
+            --varInt {} --condRef {} {}'.format(args.metadata, args.out_dir,
+                    args.varInt, args.condRef, deseq2_options)
+
+#    processCall = 'deseq2.r --targetFile {} --rawDir {}\
+#            --varInt {} --condRef {}'.format(args.metadata, args.out_dir,
+#                    args.varInt, args.condRef)
 
     execute(processCall)
 
@@ -278,14 +294,20 @@ if __name__ == '__main__':
         print("Using {}\n".format(gff_name))
 
     #these three lines could be in the filter gff function
-    gff_old_name, ext = os.path.splitext(args.gff_file)
-    gff_new_name = gff_old_name + '-CDS'
-    gff_out = gff_new_name + ext
-    filter_gff(args.gff_file,gff_out)
-    print("Filtered {} into {} for you\n".format(os.path.basename(args.gff_file),os.path.basename(gff_out)))
+    if not args.skip_counting:
+        
+        gff_old_name, ext = os.path.splitext(args.gff_file)
+        gff_new_name = gff_old_name + '-CDS'
+        gff_out = gff_new_name + ext
+        filter_gff(args.gff_file,gff_out)
+        print("Filtered {} into {} for you\n".format(os.path.basename(args.gff_file),os.path.basename(gff_out)))
 
-    htseq_count(gff_out, read_targets(args.target_file))
+        htseq_count(gff_out, read_targets(args.metadata))
 
-    run_deseq()
+        run_deseq()
+
+    else:
+
+        run_deseq()
 
     print('Program Complete, Hopefully it Worked!')

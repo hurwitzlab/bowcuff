@@ -1,0 +1,2 @@
+--fitType "mean"
+--typeTrans "rlog"

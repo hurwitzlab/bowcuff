@@ -61,3 +61,6 @@ dkms.conf
 *.log
 test-options.txt
 .DS_Store
+sanitized.txt
+figures/
+.RData
