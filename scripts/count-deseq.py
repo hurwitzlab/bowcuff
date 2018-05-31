@@ -99,6 +99,17 @@ gen_opts.add_argument('-t', '--threads',
 
 program_opts = parser.add_argument_group('Specific program options')
 
+program_opts.add_argument('-v', '--varInt',
+        dest='varInt', default='condition',
+        help="Factor of interest [ default = condition ]\n"
+        "This should not have to be changed if you are using the\n"
+        "metadata_template.txt.")
+
+program_opts.add_argument('-c', '--condRef',
+        dest='condRef', default='control',
+        help="Reference biological condition [ default = control ]\n"
+        "Needed or deseq2 will not know what to compare against.")
+
 program_opts.add_argument('-C', '--htseq-count-options', 
         dest='htseq_count_opt_txt', metavar='FILENAME',
         default=os.path.join(os.getenv('WORK'),'htseq_options.txt'),
