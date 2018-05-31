@@ -158,7 +158,7 @@ problem <- checkParameters.DESeq2(projectName=projectName,author=author,targetFi
                        condRef=condRef,batch=batch,fitType=fitType,cooksCutoff=cooksCutoff,
                        independentFiltering=independentFiltering,alpha=alpha,pAdjustMethod=pAdjustMethod,
                        typeTrans=typeTrans,locfunc=locfunc,colors=colors)
-if (problem) quit(save="yes")
+#if (problem) quit(save="yes")
 
 # loading target file
 tempTable = read.delim(targetFile)
