@@ -176,7 +176,7 @@ def execute(command):
     process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                shell=True)
     (stdout, stderr) = process.communicate()
-
+    print(stdout.decode() + os.linesep)
     print(stderr.decode() + os.linesep)
 
 #############################
