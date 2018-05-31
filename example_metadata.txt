@@ -1,3 +1,4 @@
+#IMPORTANT - do not change the column headings on the following line!!!
 label	dna_forward	dna_reverse	dna_unpaired	rna_forward	rna_reverse	rna_unpaired	bam_files	count_files	condition
 control01	DNA_3_ACAGTG_L007_R1_001.fastq	DNA_3_ACAGTG_L007_R2_001.fastq		RNA_3_CAGATC_L008_R1_001.fastq	RNA_3_CAGATC_L008_R2_001.fastq		RNA_3_CAGATC_L008_R1_001.fastq.bam	control01.txt	control
 control02	DNA_3_ACAGTG_L007_R1_002.fastq	DNA_3_ACAGTG_L007_R2_002.fastq		RNA_3_CAGATC_L008_R1_002.fastq	RNA_3_CAGATC_L008_R2_002.fastq		RNA_3_CAGATC_L008_R1_002.fastq.bam	control02.txt	control
