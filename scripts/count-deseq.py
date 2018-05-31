@@ -211,10 +211,18 @@ def htseq_count(gff, bams_and_counts):
 def run_deseq():
 
     deseq2_options = parse_options_text(args.deseq2_opt_txt)
-    #TODO: call deseq2.r 
+
+    processCall = ''
+
+    #call deseq2.r 
     #SARTools deseq wrapper
     #https://github.com/PF2-pasteur-fr/SARTools/blob/master/template_script_DESeq2_CL.r
-    return None
+
+    processCall = 'deseq2.r --targetFile {} --rawDir {}\
+            --varInt {} --condRef {}'.format(args.target_file, args.out_dir,
+                    args.varInt, args.condRef)
+
+    execute(processCall)
 
 def make_species_graphs():
 
@@ -266,5 +274,7 @@ if __name__ == '__main__':
     print("Filtered {} into {} for you\n".format(os.path.basename(args.gff_file),os.path.basename(gff_out)))
 
     htseq_count(gff_out, read_targets(args.target_file))
+
+    run_deseq()
 
     print('Program Complete, Hopefully it Worked!')
