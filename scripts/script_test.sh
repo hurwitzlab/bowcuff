@@ -32,6 +32,6 @@ export OUT_DIR="$WORK/deseq_test"
     -d -t 68 \
     -b $BAMS_DIR \
     -m $METADATA \
-    -o $WORK/count_deseq_test \
+    -o $OUT_DIR \
     -C htseq_count_options.txt \
     -D deseq2_options.txt
