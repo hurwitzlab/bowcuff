@@ -15,7 +15,7 @@ export CWD=$(pwd)
 #if the singularity.conf is right, then /vagrant should be auto-shared
 #export WORK="/vagrant"
 export BAMS_DIR="$WORK/bams"
-export GFF_DIR="$wORK/genomes" #also has genome.fa
+export GFF_DIR="$WORK/genomes" #also has genome.fa
 export METADATA="metadata.txt"
 ########################
 
@@ -29,6 +29,7 @@ export OUT_DIR="$WORK/deseq_test"
 #-i "$WORK/genomes"
 
 ./count-deseq.py -G $GFF_DIR \
+    -g $BAMS_DIR/all.RefSeq.gff \
     -d -t 68 \
     -b $BAMS_DIR \
     -m $METADATA \
