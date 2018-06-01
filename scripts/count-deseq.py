@@ -241,13 +241,14 @@ def run_deseq():
     #SARTools deseq wrapper
     #https://github.com/PF2-pasteur-fr/SARTools/blob/master/template_script_DESeq2_CL.r
 
-    processCall = './deseq2.r --targetFile {} --rawDir {}\
-            --varInt {} --condRef {} {}'.format(args.metadata, args.out_dir,
-                    args.varInt, args.condRef, deseq2_options)
+#local testing
+#    processCall = './deseq2.r --targetFile {} --rawDir {}\
+#            --varInt {} --condRef {} {}'.format(args.metadata, args.out_dir,
+#                    args.varInt, args.condRef, deseq2_options)
 
-#    processCall = 'deseq2.r --targetFile {} --rawDir {}\
-#            --varInt {} --condRef {}'.format(args.metadata, args.out_dir,
-#                    args.varInt, args.condRef)
+    processCall = 'deseq2.r --targetFile {} --rawDir {}\
+            --varInt {} --condRef {}'.format(args.metadata, args.out_dir,
+                    args.varInt, args.condRef)
 
     execute(processCall)
 
