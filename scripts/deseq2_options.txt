@@ -1,2 +1,2 @@
---fitType "mean"
---typeTrans "rlog"
+--fitType "parametric"
+--typeTrans "VST"
