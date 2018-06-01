@@ -13,7 +13,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     sed -i 's/$/ universe/' /etc/apt/sources.list
     #essential stuff
     apt update
-    apt -y --force-yes install git sudo man vim build-essential wget unzip
+    apt -y --force-yes install git sudo man vim build-essential wget unzip pkg-config
     
     cd /tmp
 
@@ -24,7 +24,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     conda install -y -c bioconda htseq
     conda install -y -c bioconda r-optparse 
 #    conda install -y -c bioconda r-sartools #need to install from github for latest version
-    conda install -y -c r r-ggplot2 r-dplyr r-r.utils r-reshape2 r-rcolorbrewer r-devtools
+    conda install -y -c r r-ggplot2 r-dplyr r-r.utils r-reshape2 r-rcolorbrewer r-devtools r-knitr r-stringi
     conda install -y -c bioconda bioconductor-deseq2 bioconductor-edger bioconductor-genefilter
 
     #cleanup    
@@ -36,6 +36,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     chmod +x /count-deseq/scripts/count-deseq.py
 
     #installing SARTools (wrapper for deseq2 / edgeR)
+    sudo cp /bin/tar /bin/gtar
     /count-deseq/scripts/install.r
 
     #so we dont get those stupid perl warnings
