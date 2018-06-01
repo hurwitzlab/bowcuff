@@ -16,7 +16,7 @@ export CWD=$(pwd)
 #export WORK="/vagrant"
 export BAMS_DIR="$WORK/bams"
 export GFF_DIR="$wORK/genomes" #also has genome.fa
-export METADATA="metadata_template.txt"
+export METADATA="metadata.txt"
 ########################
 
 
