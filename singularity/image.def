@@ -37,6 +37,7 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
 
     #installing SARTools (wrapper for deseq2 / edgeR)
     sudo cp /bin/tar /bin/gtar
+    R_LIBS="/media/miniconda/lib/R/library"
     /count-deseq/scripts/install.r
 
     #so we dont get those stupid perl warnings
