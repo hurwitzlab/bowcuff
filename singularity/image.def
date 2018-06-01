@@ -21,11 +21,12 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     bash miniconda.sh -b -p /media/miniconda
     
     PATH="/count-deseq/scripts:/media/miniconda/bin:$PATH"
-    conda install -y -c bioconda htseq pandas
-    conda install -y -c bioconda r-optparse 
-    conda install -y -c bioconda r-sartools #need to install from github for latest version
-    conda install -y -c r r-ggplot2 r-dplyr r-r.utils r-reshape2 r-rcolorbrewer 
-    conda install -y -c bioconda bioconductor-deseq2 bioconductor-edger bioconductor-genefilter
+    conda install -y -c conda-forge r-optparse
+    conda install -y -c bioconda r-sartools=1.6.3 #r-optparse 
+#    htseq pandas
+#    conda install -y -c r r-ggplot2 r-dplyr r-r.utils r-reshape2 r-rcolorbrewer 
+
+#    conda install -y -c bioconda bioconductor-deseq2 bioconductor-edger bioconductor-genefilter
 
 #r-knitr r-stringi r-markdown r-devtools
 
