@@ -64,3 +64,4 @@ test-options.txt
 sanitized.txt
 figures/
 .RData
+count-deseq/
