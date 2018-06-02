@@ -30,7 +30,7 @@ export OUT_DIR="$WORK/deseq_test"
 
 ./count-deseq.py -G $GFF_DIR \
     -g $BAMS_DIR/all.RefSeq.gff \
-    -d -t 68 \
+    -s -d -t 68 \
     -b $BAMS_DIR \
     -m $METADATA \
     -o $OUT_DIR \
