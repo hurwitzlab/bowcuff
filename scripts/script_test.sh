@@ -9,8 +9,8 @@
 #SBATCH --mail-type BEGIN,END,FAIL
 #SBATCH --mail-user scottdaniel@email.arizona.edu
 
-echo "Current working directory is $(pwd)"
-export CWD=$(pwd)
+#echo "Current working directory is $(pwd)"
+#export CWD=$(pwd)
 #for local testing#####
 #if the singularity.conf is right, then /vagrant should be auto-shared
 #export WORK="/vagrant"
@@ -21,16 +21,17 @@ export METADATA="metadata.txt"
 
 
 export OUT_DIR="$WORK/deseq_test"
-
+[[ ! -d "$OUT_DIR" ]] && mkdir -p "$OUT_DIR"
 #export MY_PARAMRUN="$HOME/launcher/paramrun"
 
-[[ -d "$OUT_DIR" ]] && rm -rf $OUT_DIR/*
+#[[ -d "$OUT_DIR" ]] && rm -rf $OUT_DIR/*
 
 #-i "$WORK/genomes"
-
+#
 ./count-deseq.py -G $GFF_DIR \
     -g $BAMS_DIR/all.RefSeq.gff \
-    -s -d -t 68 \
+    -d -t 68 \
+    --skip-counting \
     -b $BAMS_DIR \
     -m $METADATA \
     -o $OUT_DIR \
