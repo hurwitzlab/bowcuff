@@ -24,13 +24,10 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     conda update -n base conda
     conda config --add channels defaults; conda config --add channels conda-forge; conda config --add channels bioconda
     conda install -y -c conda-forge r-optparse
-    conda install -y -c bioconda r-sartools=1.6.3 #r-optparse 
-#    htseq pandas
-#    conda install -y -c r r-ggplot2 r-dplyr r-r.utils r-reshape2 r-rcolorbrewer 
+    conda install -y -c bioconda r-sartools=1.6.3 htseq pandas 
+    conda install -y -c r r-ggplot2 r-dplyr r-r.utils r-reshape2 r-rcolorbrewer 
 
-#    conda install -y -c bioconda bioconductor-deseq2 bioconductor-edger bioconductor-genefilter
-
-#r-knitr r-stringi r-markdown r-devtools
+#    conda install -y -c bioconda bioconductor-deseq2 bioconductor-edger bioconductor-genefilter r-knitr r-stringi r-markdown r-devtools # already installed with r-sartools
 
 #cleanup    
     conda clean -y --all
