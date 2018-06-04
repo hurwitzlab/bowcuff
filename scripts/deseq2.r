@@ -13,6 +13,11 @@ library(optparse)                                    # to run the script in comm
 
 # options list with associated default value.
 option_list <- list(
+make_option(c("-w", "--workDir"),
+            default=getwd(),
+            dest="workDir",
+            help="The working directory for the program, also where all output files will be [default: current working directory]."),
+
 make_option(c("-P", "--projectName"),
 			default=basename(getwd()),
 			dest="projectName",
@@ -109,7 +114,7 @@ parser <- OptionParser(usage="usage: %prog [options]",
 opt <- parse_args(parser, args=commandArgs(trailingOnly=TRUE), positional_arguments=0)$options
 
 # get options and arguments
-workDir <- getwd()
+workDir <- opt$workDir                               # working / output directory
 projectName <- opt$projectName                       # name of the project
 author <- opt$author	                             # author of the statistical analysis/report
 targetFile <- opt$targetFile                         # path to the design/target file
@@ -159,12 +164,12 @@ problem <- checkParameters.DESeq2(projectName=projectName,author=author,targetFi
                        independentFiltering=independentFiltering,alpha=alpha,pAdjustMethod=pAdjustMethod,
                        typeTrans=typeTrans,locfunc=locfunc,colors=colors)
 #if (problem) quit(save="yes")
-
+warnings()
 # loading target file
-tempTable = read.delim(targetFile)
+tempTable = read.delim(targetFile,comment.char = "#")
 sanitized_table = tempTable[,c('label','count_files','condition')]
-write.table(sanitized_table,file = "sanitized.txt",sep = "\t",row.names = F,col.names = T)
-targetFile = "sanitized.txt"
+write.table(sanitized_table,file = paste(workDir,"/sanitized.txt",sep=""),sep = "\t",row.names = F,col.names = T)
+targetFile = paste(workDir,"/sanitized.txt",sep="")
 target <- loadTargetFile(targetFile=targetFile, varInt=varInt, condRef=condRef, batch=batch)
 
 # loading counts

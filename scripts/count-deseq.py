@@ -210,7 +210,7 @@ def read_targets(metadata):
     #then return list of tuples of (bam_file, count_file)
     #targets file will also be used in the SARTools deseq wrapper
     if os.path.isfile(metadata):
-        targets = pd.read_table(metadata,delimiter='\t',header=0)
+        targets = pd.read_table(metadata,delimiter='\t',header=0,comment='#')
 
     for row in targets.itertuples(index=True, name='Pandas'):
         bams_and_counts.append([getattr(row,'bam_files'),getattr(row,'count_files')])
@@ -246,8 +246,9 @@ def run_deseq():
 #            --varInt {} --condRef {} {}'.format(args.metadata, args.out_dir,
 #                    args.varInt, args.condRef, deseq2_options)
 
-    processCall = 'deseq2.r --targetFile {} --rawDir {}\
-            --varInt {} --condRef {}'.format(args.metadata, args.out_dir,
+    processCall = 'deseq2.r {} --targetFile {} --rawDir {}\
+            --varInt {} --condRef {}'.format(deseq2_options,
+                    args.metadata, args.out_dir,
                     args.varInt, args.condRef)
 
     execute(processCall)
