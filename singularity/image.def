@@ -21,6 +21,8 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     bash miniconda.sh -b -p /media/miniconda
     
     PATH="/count-deseq/scripts:/media/miniconda/bin:$PATH"
+    conda update -n base conda
+    conda config --add channels defaults; conda config --add channels conda-forge; conda config --add channels bioconda
     conda install -y -c conda-forge r-optparse
     conda install -y -c bioconda r-sartools=1.6.3 #r-optparse 
 #    htseq pandas
