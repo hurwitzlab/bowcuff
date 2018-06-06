@@ -6,8 +6,9 @@
 - Quantified transcripts of genes within these species
 
 ## [cound-deseq - Radcot Part Three - YOU ARE HERE](https://github.com/hurwitzlab/count-deseq)
-- Annotate RNA counts of genes with KEGG pathway information
-- Generate graphs of RNA count differences per KEGG module
+- Count RNA alignments using htseq-count
+- Do differenital expression analysis using deseq2, generating graphs, tables, and a summary report
+- *TODO* Generate tables and/or graphs of pathway and species information with the genes that have counts
 
 ## How to use:
 1. Use https://www.imicrobe.us/#/apps to access the app with your [cyverse login](http://www.cyverse.org/create-account)
