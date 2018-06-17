@@ -13,9 +13,13 @@ MirrorURL: http://us.archive.ubuntu.com/ubuntu/
     sed -i 's/$/ universe/' /etc/apt/sources.list
     #essential stuff
     apt update
-    apt -y --force-yes install git sudo man vim build-essential wget unzip
+    apt -y --allow-downgrades install git sudo man vim \
+        build-essential wget unzip parallel
 #pkg-config 
     cd /tmp
+
+    mkdir /root/.parallel
+    touch /root/.parallel/will-cite
 
     wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
     bash miniconda.sh -b -p /media/miniconda
